@@ -1,5 +1,5 @@
 # 🖼️ Image-Based Steganography 🔐
-
+🔗 **Live Demo:** [View on Render](https://image-based-steganography-je4q.onrender.com/)
 This project demonstrates how to hide and extract secret text messages within images using steganography techniques, with optional encryption for added security. It is built using Python and designed to simulate a cybersecurity-focused GUI similar to Kali Linux.
 
 ## 🚀 Features
