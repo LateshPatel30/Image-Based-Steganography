@@ -2,14 +2,15 @@ import cv2
 import os
 
 def encrypt_image(input_path, output_path, msg, password, password_file_path):
-    img = cv2.imread(input_path)
+    img = cv2.imread(input_path)  #loads img
 
     if img is None:
         raise Exception(f"Could not read image: {input_path}")
 
     d = {chr(i): i for i in range(256)}
-    msg += "~"
+    msg += "~"     # end of msg decry
 
+# embeds msg into img pixles
     n = m = z = 0
     for char in msg:
         img[n, m, z] = d[char]
@@ -20,7 +21,7 @@ def encrypt_image(input_path, output_path, msg, password, password_file_path):
             m = 0
             n += 1
 
-    cv2.imwrite(output_path, img)
+    cv2.imwrite(output_path, img) #saves modified image
 
     with open(password_file_path, "w") as file:
         file.write(password)

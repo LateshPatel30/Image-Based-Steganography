@@ -1,6 +1,6 @@
 from flask import Flask, request, send_file, jsonify, render_template
-import os
-import uuid
+import os   #file
+import uuid   
 from encrypt import encrypt_image
 from decrypt import decrypt_image
 
@@ -26,7 +26,7 @@ def encrypt_route():
     output_path = os.path.join(UPLOAD_FOLDER, f"{uuid.uuid4()}.png")
 
     image.save(input_path)
-    encrypt_image(input_path, output_path, message, password, PASSWORD_FILE)
+    encrypt_image(input_path, output_path, message, password, PASSWORD_FILE)  #call function
 
     return send_file(output_path, mimetype='image/png')
 
@@ -38,7 +38,7 @@ def decrypt_route():
     input_path = os.path.join(UPLOAD_FOLDER, f"{uuid.uuid4()}.png")
     image.save(input_path)
 
-    result = decrypt_image(input_path, password, PASSWORD_FILE)
+    result = decrypt_image(input_path, password, PASSWORD_FILE)  #call 
     return jsonify({'message': result})
 
 if __name__ == '__main__':
