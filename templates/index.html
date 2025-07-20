@@ -1,0 +1,193 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Cyber Encryptor Pro</title>
+  <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@600&display=swap" rel="stylesheet">
+  <style>
+    body {
+      margin: 0;
+      padding: 0;
+      font-family: 'Orbitron', sans-serif;
+      background: radial-gradient(ellipse at center, #000000 0%, #020202 100%);
+      color: #0ff;
+      overflow-x: hidden;
+    }
+    header {
+      text-align: center;
+      padding: 30px;
+      font-size: 2.5em;
+      color: #00ffe7;
+      background: rgba(0, 255, 170, 0.1);
+      border-bottom: 2px solid #00ffe7;
+      box-shadow: 0 0 25px #00ffe7;
+    }
+    .grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 40px;
+      padding: 40px;
+      max-width: 1200px;
+      margin: auto;
+    }
+    .card {
+      background-color: #111;
+      border: 1px solid #0ff;
+      border-radius: 10px;
+      padding: 30px;
+      box-shadow: 0 0 20px #0ff2;
+      position: relative;
+      overflow: hidden;
+    }
+    .card::before {
+      content: '';
+      position: absolute;
+      top: 0; left: 0;
+      width: 100%; height: 100%;
+      background: repeating-linear-gradient(
+        0deg,
+        rgba(0, 255, 255, 0.05),
+        rgba(0, 255, 255, 0.05) 1px,
+        transparent 1px,
+        transparent 4px
+      );
+      pointer-events: none;
+      animation: scan 4s linear infinite;
+    }
+    @keyframes scan {
+      0% { transform: translateY(-100%); }
+      100% { transform: translateY(100%); }
+    }
+    h2 {
+      margin-bottom: 20px;
+      border-bottom: 1px solid #0ff;
+      padding-bottom: 10px;
+    }
+    label {
+      margin: 10px 0 5px;
+      display: block;
+    }
+    input, button {
+      width: 100%;
+      padding: 12px;
+      margin-bottom: 15px;
+      border-radius: 5px;
+      background: #000;
+      border: 1px solid #0ff;
+      color: #0ff;
+      font-family: inherit;
+      font-size: 1em;
+    }
+    button {
+      background-color: #0ff;
+      color: #000;
+      font-weight: bold;
+      transition: background 0.3s ease;
+    }
+    button:hover {
+      background-color: #00cccc;
+    }
+    .loader {
+      display: none;
+      margin: 10px auto;
+      border: 6px solid #222;
+      border-top: 6px solid #00ffe7;
+      border-radius: 50%;
+      width: 40px;
+      height: 40px;
+      animation: spin 0.8s linear infinite;
+    }
+    @keyframes spin {
+      0% { transform: rotate(0deg); }
+      100% { transform: rotate(360deg); }
+    }
+    #output {
+      background: #000;
+      padding: 15px;
+      border: 1px solid #0ff;
+      margin-top: 10px;
+      border-radius: 5px;
+      font-size: 1em;
+      animation: typeIn 1.2s steps(40, end);
+    }
+    @keyframes typeIn {
+      from { width: 0; }
+      to { width: 100%; }
+    }
+  </style>
+</head>
+<body>
+  <header>Image-Based Steganography & Decryption Platform</header>
+  <div class="grid">
+    <div class="card">
+      <h2>🔐 Encrypt Message</h2>
+      <form id="encryptForm">
+        <label>Select Image</label>
+        <input type="file" name="image" accept="image/*" required>
+        <label>Secret Message</label>
+        <input type="text" name="message" placeholder="Enter your secret message" required>
+        <label>Password</label>
+        <input type="password" name="password" placeholder="Set a password" required>
+        <button type="submit">Encrypt</button>
+      </form>
+    </div>
+    <div class="card">
+      <h2>🔓 Decrypt Message</h2>
+      <form id="decryptForm">
+        <label>Select Encrypted Image</label>
+        <input type="file" name="image" accept="image/*" required>
+        <label>Password</label>
+        <input type="password" name="password" placeholder="Enter password to decrypt" required>
+        <button type="submit">Decrypt</button>
+      </form>
+      <div class="loader" id="loader"></div>
+      <div id="output"></div>
+    </div>
+  </div>
+  <script>
+    const loader = document.getElementById('loader');
+    const output = document.getElementById('output');
+
+    function showLoader() {
+      loader.style.display = 'block';
+      output.textContent = '';
+    }
+
+    function hideLoader() {
+      loader.style.display = 'none';
+    }
+
+    document.getElementById('encryptForm').addEventListener('submit', async (e) => {
+      e.preventDefault();
+      showLoader();
+      const formData = new FormData(e.target);
+      const res = await fetch('/encrypt', { method: 'POST', body: formData });
+      hideLoader();
+      if (res.ok) {
+        const blob = await res.blob();
+        const url = window.URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = "encryptedImage.png";
+        a.click();
+        output.textContent = "✅ Image encrypted successfully.";
+      } else {
+        output.textContent = "❌ Encryption failed.";
+      }
+    });
+
+    document.getElementById('decryptForm').addEventListener('submit', async (e) => {
+      e.preventDefault();
+      showLoader();
+      const formData = new FormData(e.target);
+      const res = await fetch('/decrypt', { method: 'POST', body: formData });
+      const data = await res.json();
+      hideLoader();
+      if (data.message) {
+        output.textContent = data.message;
+      }
+    });
+  </script>
+</body>
+</html>
